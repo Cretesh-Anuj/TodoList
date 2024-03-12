@@ -1,32 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using TodoList.Models;
+using TodoList.Data;
+using Task = TodoList.Models.Task;
+
 
 namespace TodoList.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private TaskContext _taskContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, TaskContext taskContext)
         {
             _logger = logger;
+            _taskContext = taskContext;
         }
 
         public IActionResult Index()
         {
-            return View();
+            List<Task> tasks = _taskContext.Tasks.ToList();
+            return View(tasks);
         }
-
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult CreateTask(Task task)
         {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            _taskContext.Add(task);
+            _taskContext.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

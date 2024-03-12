@@ -1,8 +1,51 @@
-﻿@{
+﻿@model IEnumerable<TodoList.Models.Task>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+  
+    <form class="task-form">
+        <input type="text" id="Name" name="Name" placeholder="Enter Your Task Here" />
+        <button class="btn-primary add-task" type="button">Add task</button>
+    </form>
+    <br/>
+    <br/>
+    <div class="table-bordered">
+        <div>Your Tasks List</div>
+        @if(Model == null || Model.Count() == 0)
+        {
+            <p> No Any Tasks Added</p>
+        }
+        else{
+            @foreach (var item in Model)
+            {
+                <ul>
+                    <li> @item.Name</li>
+                </ul>
+            }
+        }
+    </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha512-bnIvzh6FU75ZKxp0GXLH9bewza/OIw6dLVh9ICg0gogclmYGguQJWl8U30WpbsGTqbIiAwxTsbe76DErLq5EDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $('.add-task').click(function () {
+        debugger;
+        var task = {
+            Name: $('#Name').val().toString()
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Home/CreateTask",
+            data: task,
+            async: false,
+            success: function () {
+                window.location.reload(true)
+            },
+            error: function () {
+                console.error("OOPS")
+            }
+        })
+
+    })
+</script>
